@@ -116,6 +116,9 @@ class AudioDeviceHandlerConnectionService implements
 
     @Override
     public void onCallAudioStateChange(final CallAudioState state) {
+        android.util.Log.e("🔥AUDIO_DEBUG", "⚠️ onCallAudioStateChange called!");
+    android.util.Log.e("🔥AUDIO_DEBUG", "New route from system: " + state.getRoute());
+
         module.runInAudioThread(new Runnable() {
             @Override
             public void run() {
@@ -162,11 +165,52 @@ class AudioDeviceHandlerConnectionService implements
         }
     }
 
+    // public void setAudioRoute(String audioDevice) {
+    //     int newAudioRoute = audioDeviceToRouteInt(audioDevice);
+
+    //     RNConnectionService.setAudioRoute(newAudioRoute);
+    // }
+
     public void setAudioRoute(String audioDevice) {
         int newAudioRoute = audioDeviceToRouteInt(audioDevice);
+        android.util.Log.e("🔥AUDIO_DEBUG", "setAudioRoute called with: " + audioDevice);
+    android.util.Log.e("🔥AUDIO_DEBUG", "Converted to route: " + newAudioRoute);
 
         RNConnectionService.setAudioRoute(newAudioRoute);
+        // FIX: Force speaker off when selecting earpiece (for problematic Samsung devices)
+
+        if (AudioModeModule.DEVICE_EARPIECE.equals(audioDevice)) {
+            try {
+                // Explicitly disable speakerphone
+                boolean speakerOn = audioManager.isSpeakerphoneOn();
+            android.util.Log.e("🔥AUDIO_DEBUG", "isSpeakerphoneOn: " + speakerOn);
+
+            if (speakerOn) {
+                android.util.Log.e("🔥AUDIO_DEBUG", "Forcing speaker OFF");
+                audioManager.setSpeakerphoneOn(false);
+                JitsiMeetLogger.i(TAG + " Forced speakerphone OFF for earpiece selection");
+            }
+            } catch (Throwable tr) {
+                android.util.Log.e("🔥AUDIO_DEBUG", "Failed to force speaker off: " + tr.getMessage());
+                JitsiMeetLogger.w(tr, TAG + " Failed to force speakerphone off");
+            }
+        }
     }
+
+    // @Override
+    // public boolean setMode(int mode) {
+    //     if (mode != AudioModeModule.DEFAULT) {
+    //         // This shouldn't be needed when using ConnectionService, but some devices have been
+    //         // observed not doing it.
+    //         try {
+    //             audioManager.setMicrophoneMute(false);
+    //         } catch (Throwable tr) {
+    //             JitsiMeetLogger.w(tr, TAG + " Failed to unmute the microphone");
+    //         }
+    //     }
+
+    //     return true;
+    // }
 
     @Override
     public boolean setMode(int mode) {
@@ -177,6 +221,24 @@ class AudioDeviceHandlerConnectionService implements
                 audioManager.setMicrophoneMute(false);
             } catch (Throwable tr) {
                 JitsiMeetLogger.w(tr, TAG + " Failed to unmute the microphone");
+            }
+
+            // FIX: Force audio mode to MODE_IN_COMMUNICATION for better routing control
+            try {
+                if (audioManager.getMode() != AudioManager.MODE_IN_COMMUNICATION) {
+                    audioManager.setMode(AudioManager.MODE_IN_COMMUNICATION);
+                    JitsiMeetLogger.i(TAG + " Set audio mode to MODE_IN_COMMUNICATION");
+                }
+            } catch (Throwable tr) {
+                JitsiMeetLogger.w(tr, TAG + " Failed to set audio mode");
+            }
+        } else {
+            // FIX: When mode is DEFAULT, restore normal audio mode
+            try {
+                audioManager.setMode(AudioManager.MODE_NORMAL);
+                audioManager.setSpeakerphoneOn(false);
+            } catch (Throwable tr) {
+                JitsiMeetLogger.w(tr, TAG + " Failed to reset audio mode");
             }
         }
 

@@ -152,7 +152,7 @@ StateListenerRegistry.register(
                 dispatch(hideDialog());
             }
         }
-    }
+    },
 );
 
 /**
@@ -193,7 +193,7 @@ function _conferenceJoined({ dispatch, getState }: IStore) {
                     dispatch,
                     getState,
                 }),
-            10 * 1000
+            10 * 1000,
         );
     }
 
@@ -253,13 +253,16 @@ function _checkIframe(state: IReduxState, dispatch: IStore["dispatch"]) {
                             timeout: IFRAME_DISABLED_TIMEOUT_MINUTES,
                         }),
                     },
-                    NOTIFICATION_TIMEOUT_TYPE.STICKY
-                )
+                    NOTIFICATION_TIMEOUT_TYPE.STICKY,
+                ),
             );
 
-            setTimeout(() => {
-                dispatch(hangup());
-            }, IFRAME_DISABLED_TIMEOUT_MINUTES * 60 * 1000);
+            setTimeout(
+                () => {
+                    dispatch(hangup());
+                },
+                IFRAME_DISABLED_TIMEOUT_MINUTES * 60 * 1000,
+            );
         } else {
             dispatch(
                 showWarningNotification(
@@ -270,14 +273,17 @@ function _checkIframe(state: IReduxState, dispatch: IStore["dispatch"]) {
                             timeout: IFRAME_DISABLED_TIMEOUT_MINUTES,
                         }),
                     },
-                    NOTIFICATION_TIMEOUT_TYPE.STICKY
-                )
+                    NOTIFICATION_TIMEOUT_TYPE.STICKY,
+                ),
             );
 
-            setTimeout(() => {
-                // redirect to the promotional page
-                dispatch(redirectToStaticPage("static/close3.html", `#jitsi_meet_external_api_id=${API_ID}`));
-            }, IFRAME_DISABLED_TIMEOUT_MINUTES * 60 * 1000);
+            setTimeout(
+                () => {
+                    // redirect to the promotional page
+                    dispatch(redirectToStaticPage("static/close3.html", `#jitsi_meet_external_api_id=${API_ID}`));
+                },
+                IFRAME_DISABLED_TIMEOUT_MINUTES * 60 * 1000,
+            );
         }
     }
 }
@@ -331,7 +337,7 @@ function _maybeDisplayCalendarNotification({ dispatch, getState }: IStore) {
             dispatch,
             getState,
         },
-        eventToShow
+        eventToShow,
     );
 }
 
@@ -388,7 +394,7 @@ function _calendarNotification({ dispatch, getState }: IStore, eventToShow: any)
                 title,
                 uid,
             },
-            NOTIFICATION_TIMEOUT_TYPE.STICKY
-        )
+            NOTIFICATION_TIMEOUT_TYPE.STICKY,
+        ),
     );
 }

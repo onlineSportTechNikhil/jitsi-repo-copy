@@ -54,6 +54,8 @@ export const CALL_INTEGRATION_ENABLED = 'call-integration.enabled';
  */
 export const CAR_MODE_ENABLED = 'car-mode.enabled';
 
+export const NITIN_ENABLE = 'nitin-force.enabled';
+
 /**
  * Flag indicating if close captions should be enabled.
  * Default: enabled (true).

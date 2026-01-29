@@ -3,6 +3,7 @@ import React, { useCallback, useEffect } from "react";
 import { BackHandler, NativeModules, SafeAreaView, View, ViewStyle, AppState, AppStateStatus } from "react-native";
 import { EdgeInsets, withSafeAreaInsets } from "react-native-safe-area-context";
 import { connect, useDispatch } from "react-redux";
+import { getFeatureFlag } from "../../../base/flags/functions";
 
 import { getLocalParticipant } from "../../../base/participants/functions";
 import { appNavigate } from "../../../app/actions.native";
@@ -53,6 +54,8 @@ interface IProps extends AbstractProps {
      * Application's aspect ratio.
      */
     _aspectRatio: Symbol;
+
+    _forceCarMode?: boolean;
 
     /**
      * Whether the audio only is enabled or not.
@@ -200,10 +203,24 @@ class Conference extends AbstractConference<IProps, State> {
       ✅ NEW METHOD: Handle app state changes
      * Hangs up when app goes to background or inactive
      */
+
+    // _handleAppStateChange(nextAppState: AppStateStatus) {
+    //     console.log("📱 [APP STATE]", nextAppState);
+
+    //     // ❗ DO NOTHING on inactive
+    //     if (nextAppState === "inactive") {
+    //         return;
+    //     }
+
+    //     // ❗ Background me bhi auto-hangup mat karo
+    //     // Let Jitsi handle lifecycle
+    // }
+
     _handleAppStateChange(nextAppState: AppStateStatus) {
         console.log("📱 [APP STATE] App state changed to:", nextAppState);
 
-        if (nextAppState === "background" || nextAppState === "inactive") {
+        if (nextAppState === "background") {
+            // if (nextAppState === "background" || nextAppState === "inactive") {
             console.log("📱 [APP STATE] App went to background/inactive - Hanging up");
 
             // Hang up the meeting
@@ -221,7 +238,7 @@ class Conference extends AbstractConference<IProps, State> {
     override componentDidMount() {
         console.log("🚗 [CONFERENCE COMPONENT] componentDidMount called");
 
-        const { _audioOnlyEnabled, _isModerator, _startCarMode, navigation } = this.props;
+        const { _audioOnlyEnabled, _isModerator, _startCarMode, _forceCarMode } = this.props;
 
         console.log("🚗 [CONFERENCE COMPONENT] Props:", {
             _audioOnlyEnabled,
@@ -229,19 +246,20 @@ class Conference extends AbstractConference<IProps, State> {
             _startCarMode,
         });
 
+        // Listen to hardware back button
         this._hardwareBackPressSubscription = BackHandler.addEventListener(
             "hardwareBackPress",
-            this._onHardwareBackPress
+            this._onHardwareBackPress,
         );
 
-        // ✅ ADD: Listen to app state changes (background/foreground)
+        // ✅ Listen to app state changes (background/foreground)
         this._appStateSubscription = AppState.addEventListener("change", this._handleAppStateChange);
 
         // Only non-moderators navigate to car mode
-        if (!_isModerator) {
+        if (_forceCarMode && !_isModerator) {
             setTimeout(() => {
-                navigation.navigate(screen.conference.carmode);
-            }, 500);
+                navigate(screen.conference.carmode);
+            }, 500); // optional delay
         }
     }
 
@@ -251,14 +269,22 @@ class Conference extends AbstractConference<IProps, State> {
      * @inheritdoc
      */
     override componentDidUpdate(prevProps: IProps) {
-        const { _audioOnlyEnabled, _showLobby, _startCarMode } = this.props;
+        const { _audioOnlyEnabled, _showLobby, _startCarMode, _forceCarMode } = this.props;
 
+        // Lobby opened
         if (!prevProps._showLobby && _showLobby) {
             navigate(screen.lobby.root);
         }
 
+        // Lobby closed
         if (prevProps._showLobby && !_showLobby) {
+            // 🔐 Guard 1: audio-only + start car mode
             if (_audioOnlyEnabled && _startCarMode) {
+                return;
+            }
+
+            // 🔐 Guard 2: forced car mode
+            if (_forceCarMode) {
                 return;
             }
 
@@ -570,18 +596,19 @@ function _mapStateToProps(state: IReduxState, _ownProps: any) {
     const { backgroundColor } = state["features/dynamic-branding"];
     const { startCarMode } = state["features/base/settings"];
     const { enabled: audioOnlyEnabled } = state["features/base/audio-only"];
-    const brandingStyles = backgroundColor
-        ? {
-              background: backgroundColor,
-          }
-        : undefined;
+
+    const brandingStyles = backgroundColor ? { background: backgroundColor } : undefined;
 
     const jwt = state["features/base/jwt"];
     const localParticipant = getLocalParticipant(state);
     const isModerator = localParticipant?.role === "moderator" || jwt?.moderator === true;
 
+    // ✅ FEATURE FLAG (SAFE)
+    const forceCarMode = getFeatureFlag(state, "nitin-force.enabled");
+
     return {
         ...abstractMapStateToProps(state),
+
         _aspectRatio: aspectRatio,
         _audioOnlyEnabled: Boolean(audioOnlyEnabled),
         _brandingStyles: brandingStyles,
@@ -597,6 +624,9 @@ function _mapStateToProps(state: IReduxState, _ownProps: any) {
         _showLobby: getIsLobbyVisible(state),
         _startCarMode: startCarMode,
         _toolboxVisible: isToolboxVisible(state),
+
+        // ✅ NEW PROP
+        _forceCarMode: typeof forceCarMode === "boolean" ? forceCarMode : false,
     };
 }
 
@@ -604,8 +634,16 @@ export default withSafeAreaInsets(
     connect(_mapStateToProps)((props) => {
         const dispatch = useDispatch();
 
+        const hasFocusedRef = React.useRef(false);
+
         useFocusEffect(
             useCallback(() => {
+                if (hasFocusedRef.current) {
+                    return;
+                }
+
+                hasFocusedRef.current = true;
+
                 dispatch({ type: CONFERENCE_FOCUSED });
                 setPictureInPictureEnabled(true);
 
@@ -613,12 +651,12 @@ export default withSafeAreaInsets(
                     dispatch({ type: CONFERENCE_BLURRED });
                     setPictureInPictureEnabled(false);
                 };
-            }, [])
+            }, []),
         );
 
         return (
             // @ts-ignore
             <Conference {...props} />
         );
-    })
+    }),
 );

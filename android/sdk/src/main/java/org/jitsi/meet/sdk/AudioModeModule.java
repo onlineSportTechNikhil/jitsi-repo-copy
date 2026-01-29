@@ -271,19 +271,27 @@ class AudioModeModule extends ReactContextBaseJavaModule {
      */
     @ReactMethod
     public void setAudioDevice(final String device) {
+        android.util.Log.e("🔥AUDIO_DEBUG", "setAudioDevice called with: " + device);
+        android.util.Log.e("🔥AUDIO_DEBUG", "availableDevices: " + availableDevices.toString());
+        android.util.Log.e("🔥AUDIO_DEBUG", "mode: " + mode);
         runInAudioThread(new Runnable() {
             @Override
             public void run() {
                 if (!availableDevices.contains(device)) {
+                    android.util.Log.e("🔥AUDIO_DEBUG", "❌ DEVICE NOT AVAILABLE!");
                     JitsiMeetLogger.w(TAG + " Audio device not available: " + device);
+
                     userSelectedDevice = null;
                     return;
                 }
 
                 if (mode != -1) {
+                    android.util.Log.e("🔥AUDIO_DEBUG", "✅ Setting userSelectedDevice to: " + device);
                     JitsiMeetLogger.i(TAG + " User selected device set to: " + device);
                     userSelectedDevice = device;
                     updateAudioRoute(mode, false);
+                }else{
+                    android.util.Log.e("🔥AUDIO_DEBUG", "❌ Mode is -1, not updating route");
                 }
             }
         });
@@ -384,6 +392,13 @@ class AudioModeModule extends ReactContextBaseJavaModule {
      * {@code false}, otherwise.
      */
     private boolean updateAudioRoute(int mode, boolean force) {
+        android.util.Log.e("🔥AUDIO_DEBUG", "updateAudioRoute called");
+        android.util.Log.e("🔥AUDIO_DEBUG", "mode: " + mode);
+        android.util.Log.e("🔥AUDIO_DEBUG", "force: " + force);
+        android.util.Log.e("🔥AUDIO_DEBUG", "selectedDevice: " + selectedDevice);
+        android.util.Log.e("🔥AUDIO_DEBUG", "userSelectedDevice: " + userSelectedDevice);
+
+
         JitsiMeetLogger.i(TAG + " Update audio route for mode: " + mode);
 
         if (!audioDeviceHandler.setMode(mode)) {
@@ -414,15 +429,20 @@ class AudioModeModule extends ReactContextBaseJavaModule {
         // Consider the user's selection
         if (userSelectedDevice != null && availableDevices.contains(userSelectedDevice)) {
             audioDevice = userSelectedDevice;
+             android.util.Log.e("🔥AUDIO_DEBUG", "✅ Using userSelectedDevice: " + audioDevice);
+        } else {
+            android.util.Log.e("🔥AUDIO_DEBUG", "⚠️ Using default device: " + audioDevice);
         }
 
         // If the previously selected device and the current default one
         // match, do nothing.
         if (!force && selectedDevice != null && selectedDevice.equals(audioDevice)) {
+            android.util.Log.e("🔥AUDIO_DEBUG", "ℹ️ Device unchanged, skipping");
             return true;
         }
 
         selectedDevice = audioDevice;
+        android.util.Log.e("🔥AUDIO_DEBUG", "📢 CALLING audioDeviceHandler.setAudioRoute(" + audioDevice + ")");
         JitsiMeetLogger.i(TAG + " Selected audio device: " + audioDevice);
 
         audioDeviceHandler.setAudioRoute(audioDevice);

@@ -39,6 +39,19 @@ const DEFAULT_STATE = {
     tileViewEnabled: undefined,
 };
 
+const getInitialState = (state) => {
+    const isCarMode = getFeatureFlag(state, IS_CAR_MODE, false);
+
+    console.log("🚀 Initial Layout Flag isCarMode:", isCarMode);
+
+    return {
+        carMode: isCarMode,
+        carModeLocked: true, // IMPORTANT: prevents later flip
+        remoteScreenShares: [],
+        tileViewEnabled: isCarMode ? false : true,
+    };
+};
+
 export interface IVideoLayoutState {
     carMode: boolean;
     carModeLocked: boolean;

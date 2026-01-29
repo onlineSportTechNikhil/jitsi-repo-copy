@@ -226,6 +226,11 @@ class AudioRoutePickerDialog extends Component<IProps, IState> {
         console.log("🔥 _onSelectDeviceFn called with device:", this.props);
 
         return () => {
+            console.log("🔥 DEVICE SELECTED:");
+            console.log("🔥 device.type:", device.type);
+            console.log("🔥 device.uid:", device.uid);
+            console.log("🔥 Calling AudioMode.setAudioDevice with:", device.uid || device.type);
+
             if (_localParticipant?.id) {
                 dispatch({
                     type: "LOCAL_AUDIO_ROUTE_CHANGED",

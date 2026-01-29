@@ -53,8 +53,13 @@ popd
 pushd ${RELEASE_REPO}
 
 # Put the new files in the repo
+# cp -a ${PROJECT_REPO}/ios/sdk/out/JitsiMeetSDK.xcframework Frameworks/
+# cp -a ${PROJECT_REPO}/ios/Pods/hermes-engine/destroot/Library/Frameworks/universal/hermes.xcframework Frameworks/
+
 cp -a ${PROJECT_REPO}/ios/sdk/out/JitsiMeetSDK.xcframework Frameworks/
 cp -a ${PROJECT_REPO}/ios/Pods/hermes-engine/destroot/Library/Frameworks/universal/hermes.xcframework Frameworks/
+cp -a ${PROJECT_REPO}/ios/Pods/JitsiWebRTC/WebRTC.xcframework Frameworks/
+cp -a ${PROJECT_REPO}/ios/Pods/Giphy/GiphySDK/GiphyUISDK.xcframework Frameworks/
 
 # Add all files to git
 git add -A .
