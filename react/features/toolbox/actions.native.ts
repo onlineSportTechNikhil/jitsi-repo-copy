@@ -1,6 +1,6 @@
-import { CUSTOM_BUTTON_PRESSED } from './actionTypes';
+import { CUSTOM_BUTTON_PRESSED } from "./actionTypes";
 
-export * from './actions.any';
+export * from "./actions.any";
 
 /**
  * Shows the toolbox for specified timeout.
@@ -37,9 +37,11 @@ export function setOverflowMenuVisible(_visible: boolean): any {
  * }}
  */
 export function customButtonPressed(id: string, text: string | undefined) {
+    console.log(`nikhil button id :- ${id}`);
+    console.log(`nikhil button id :- ${text}`);
     return {
         type: CUSTOM_BUTTON_PRESSED,
         id,
-        text
+        text,
     };
 }

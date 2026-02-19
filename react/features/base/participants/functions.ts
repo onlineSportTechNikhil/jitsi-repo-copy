@@ -365,7 +365,7 @@ export function getRemoteParticipantCountWithFake(stateful: IStateful) {
 export function getMutedStateByParticipantAndMediaType(
     stateful: IStateful,
     participant: IParticipant,
-    mediaType: MediaType
+    mediaType: MediaType,
 ): boolean {
     const type = mediaType === MEDIA_TYPE.SCREENSHARE ? "video" : mediaType;
 
@@ -521,7 +521,7 @@ export function getScreenshareParticipantIds(stateful: IStateful): Array<string>
 export function getSourceNamesByMediaTypeAndParticipant(
     stateful: IStateful,
     id: string,
-    mediaType: string
+    mediaType: string,
 ): Array<string> {
     const participant: IParticipant | undefined = getParticipantById(stateful, id);
 
@@ -553,7 +553,7 @@ export function getSourceNamesByMediaTypeAndParticipant(
 export function getSourceNamesByVideoTypeAndParticipant(
     stateful: IStateful,
     id: string,
-    videoType: string
+    videoType: string,
 ): Array<string> {
     const participant: IParticipant | undefined = getParticipantById(stateful, id);
 
@@ -826,7 +826,7 @@ export const setShareDialogVisiblity = (addPeopleFeatureEnabled: boolean, dispat
 export function isPrivateChatEnabled(
     participant: IParticipant | IVisitorChatParticipant | undefined,
     state: IReduxState,
-    checkSelf: boolean = false
+    checkSelf: boolean = false,
 ): boolean {
     const { remoteVideoMenu = {} } = state["features/base/config"];
     const { disablePrivateChat } = remoteVideoMenu;

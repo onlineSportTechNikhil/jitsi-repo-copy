@@ -1,14 +1,13 @@
-import React from 'react';
-import { View } from 'react-native';
-import { Edge, SafeAreaView } from 'react-native-safe-area-context';
+import React from "react";
+import { View } from "react-native";
+import { Edge, SafeAreaView } from "react-native-safe-area-context";
 
-import { StyleType } from '../../styles/functions.any';
+import { StyleType } from "../../styles/functions.any";
 
-import JitsiKeyboardAvoidingView from './JitsiKeyboardAvoidingView';
-import styles from './styles';
+import JitsiKeyboardAvoidingView from "./JitsiKeyboardAvoidingView";
+import styles from "./styles";
 
 interface IProps {
-
     /**
      * Adds bottom padding.
      */
@@ -63,32 +62,26 @@ const JitsiScreen = ({
     footerComponent,
     hasBottomTextInput = false,
     hasExtraHeaderHeight = false,
-    safeAreaInsets = [ 'left', 'right' ],
-    style
+    safeAreaInsets = ["left", "right"],
+    style,
 }: IProps) => {
     const renderContent = () => (
         <JitsiKeyboardAvoidingView
-            addBottomPadding = { addBottomPadding }
-            contentContainerStyle = { contentContainerStyle }
-            disableForcedKeyboardDismiss = { disableForcedKeyboardDismiss }
-            hasBottomTextInput = { hasBottomTextInput }
-            hasExtraHeaderHeight = { hasExtraHeaderHeight }
-            style = { style }>
-            <SafeAreaView
-                edges = { safeAreaInsets }
-                style = { styles.safeArea }>
-                { children }
+            addBottomPadding={addBottomPadding}
+            contentContainerStyle={contentContainerStyle}
+            disableForcedKeyboardDismiss={disableForcedKeyboardDismiss}
+            hasBottomTextInput={hasBottomTextInput}
+            hasExtraHeaderHeight={hasExtraHeaderHeight}
+            style={style}
+        >
+            <SafeAreaView edges={safeAreaInsets} style={styles.safeArea}>
+                {children}
             </SafeAreaView>
-            { footerComponent?.() }
+            {footerComponent?.()}
         </JitsiKeyboardAvoidingView>
     );
 
-    return (
-        <View style = { styles.jitsiScreenContainer }>
-            { renderContent() }
-        </View>
-    );
+    return <View style={styles.jitsiScreenContainer}>{renderContent()}</View>;
 };
-
 
 export default JitsiScreen;

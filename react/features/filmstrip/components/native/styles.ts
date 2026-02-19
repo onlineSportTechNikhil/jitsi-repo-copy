@@ -100,24 +100,43 @@ export default {
      * The style of a participant's Thumbnail which renders either the video or
      * the avatar of the associated participant.
      */
+    // thumbnail: {
+    //     alignItems: "stretch",
+    //     backgroundColor: BaseTheme.palette.ui02,
+    //     borderColor: BaseTheme.palette.ui03,
+    //     borderRadius: BaseTheme.shape.borderRadius,
+    //     borderStyle: "solid",
+    //     borderWidth: 1,
+    //     flex: 1,
+    //     height: SMALL_THUMBNAIL_SIZE,
+    //     justifyContent: "center",
+    //     margin: 2,
+    //     maxHeight: SMALL_THUMBNAIL_SIZE,
+    //     maxWidth: SMALL_THUMBNAIL_SIZE,
+    //     overflow: "hidden",
+    //     position: "relative",
+    //     width: SMALL_THUMBNAIL_SIZE,
+    // },
     thumbnail: {
         alignItems: "stretch",
-        backgroundColor: BaseTheme.palette.ui02,
-        borderColor: BaseTheme.palette.ui03,
+        // backgroundColor: "#34c759",
+        backgroundColor: "#fc9d49",
+        // borderColor: BaseTheme.palette.ui03,
+        borderColor: "#fc9d49",
+        // borderColor: "#34c759",
         borderRadius: BaseTheme.shape.borderRadius,
         borderStyle: "solid",
-        borderWidth: 1,
-        flex: 1,
-        height: SMALL_THUMBNAIL_SIZE,
+        borderWidth: 2,
+        flex: 0, // Changed from 1 to 0 - prevents flex growing
+        height: 50, // Fixed height
+        width: 160, // Fixed width
         justifyContent: "center",
         margin: 2,
-        maxHeight: SMALL_THUMBNAIL_SIZE,
-        maxWidth: SMALL_THUMBNAIL_SIZE,
+        maxHeight: 50, // Match fixed height
+        maxWidth: 160, // Match fixed width
         overflow: "hidden",
         position: "relative",
-        width: SMALL_THUMBNAIL_SIZE,
     },
-
     indicatorContainer: {
         ...indicatorContainer,
     },
@@ -169,10 +188,10 @@ export default {
     },
     //Nikhil Made changes here
     unmutedHighlight: {
-        borderColor: "yellow", // you can choose any color
+        borderColor: "rgb(255, 255, 0)", // you can choose any color
         borderWidth: 4,
         borderRadius: 10,
-        backgroundColor: "rgba(255, 255, 0, 0.5)",
+        backgroundColor: "rgb(255, 255, 0)",
     },
 
     thumbnailGif: {
@@ -189,18 +208,18 @@ export default {
     thumbnailOnPhone: {
         borderWidth: 3,
         borderColor: "#ff3b30", // red
-        backgroundColor: "rgba(255,59,48,0.1)",
+        backgroundColor: "#ff3b30",
     },
 
     thumbnailOnSpeaker: {
         borderWidth: 3,
         borderColor: "#34c759", // green
-        backgroundColor: "rgba(52,199,89,0.1)",
+        backgroundColor: "#34c759",
     },
 
     thumbnailOnHeadphones: {
         borderWidth: 3,
         borderColor: "#5856d6", // purple
-        backgroundColor: "rgba(88,86,214,0.1)",
+        backgroundColor: "#5856d6",
     },
 };

@@ -42,7 +42,6 @@ import ScreenShareIndicator from "./ScreenShareIndicator";
 import styles, { AVATAR_SIZE } from "./styles";
 import { getCurrentConference } from "../../../base/conference/functions";
 
-
 /**
  * Thumbnail component's property types.
  */
@@ -66,7 +65,6 @@ interface IProps {
      * Indicates whether the participant is screen sharing.
      */
     _isScreenShare: boolean;
-
 
     _isModerator?: boolean;
 
@@ -175,14 +173,7 @@ class Thumbnail extends PureComponent<IProps> {
      * @returns {void}
      */
     _onClick() {
-        const {
-            _participantId,
-            _pinned,
-            dispatch,
-            tileView,
-            _local,
-            _isModerator,
-        } = this.props;
+        const { _participantId, _pinned, dispatch, tileView, _local, _isModerator } = this.props;
 
         // ❌ apne upar force speaker nahi
         if (_local) {
@@ -209,8 +200,6 @@ class Thumbnail extends PureComponent<IProps> {
         }
     }
 
-
-
     /**
      * Thumbnail long press handler.
      *
@@ -236,56 +225,28 @@ class Thumbnail extends PureComponent<IProps> {
      * @returns {ReactElement}
      */
     _renderIndicators() {
-        const {
-            _audioMuted: audioMuted,
-            _fakeParticipant,
-            _isScreenShare: isScreenShare,
-            _isVirtualScreenshare,
-            _participantId: participantId,
-            _pinned,
-            _renderModeratorIndicator: renderModeratorIndicator,
-            _shouldDisplayTileView,
-            renderDisplayName,
-            tileView,
-        } = this.props;
-        const indicators = [];
+        const { _audioMuted: audioMuted, _participantId: participantId, renderDisplayName } = this.props;
 
-        let bottomIndicatorsContainerStyle;
+        // Return only the name, centered
+        return (
+            <View
+                style={{
+                    flex: 1,
+                    alignItems: "center",
+                    justifyContent: "center",
+                    width: "100%",
+                }}
+            >
+                {renderDisplayName && <DisplayNameLabel contained={false} participantId={participantId} />}
 
-        if (_shouldDisplayTileView) {
-            bottomIndicatorsContainerStyle = styles.bottomIndicatorsContainer;
-        } else if (audioMuted || renderModeratorIndicator) {
-            bottomIndicatorsContainerStyle = styles.bottomIndicatorsContainer;
-        } else {
-            bottomIndicatorsContainerStyle = null;
-        }
-
-        if (!_fakeParticipant || _isVirtualScreenshare) {
-            indicators.push(
-                <View key="top-left-indicators" style={styles.thumbnailTopLeftIndicatorContainer as ViewStyle}>
-                    {!_isVirtualScreenshare && <ConnectionIndicator participantId={participantId} />}
-                    {!_isVirtualScreenshare && <RaisedHandIndicator participantId={participantId} />}
-                    {tileView && (isScreenShare || _isVirtualScreenshare) && (
-                        <View style={styles.screenShareIndicatorContainer as ViewStyle}>
-                            <ScreenShareIndicator />
-                        </View>
-                    )}
-                </View>
-            );
-            indicators.push(
-                <Container key="bottom-indicators" style={styles.thumbnailIndicatorContainer as StyleType}>
-                    <Container style={bottomIndicatorsContainerStyle as StyleType}>
-                        {audioMuted && !_isVirtualScreenshare && <AudioMutedIndicator />}
-                        {!tileView && _pinned && <PinnedIndicator />}
-                        {renderModeratorIndicator && !_isVirtualScreenshare && <ModeratorIndicator />}
-                        {!tileView && (isScreenShare || _isVirtualScreenshare) && <ScreenShareIndicator />}
-                    </Container>
-                    {renderDisplayName && <DisplayNameLabel contained={true} participantId={participantId} />}
-                </Container>
-            );
-        }
-
-        return indicators;
+                {/* Optional: show mute in corner */}
+                {audioMuted && (
+                    <View style={{ position: "absolute", bottom: 4, left: 4 }}>
+                        <AudioMutedIndicator />
+                    </View>
+                )}
+            </View>
+        );
     }
 
     /**
@@ -303,10 +264,10 @@ class Thumbnail extends PureComponent<IProps> {
         if (_videoTrack && !_videoTrack.local) {
             _videoTrack.jitsiTrack.on(
                 JitsiTrackEvents.TRACK_STREAMING_STATUS_CHANGED,
-                this.handleTrackStreamingStatusChanged
+                this.handleTrackStreamingStatusChanged,
             );
             dispatch(
-                trackStreamingStatusChanged(_videoTrack.jitsiTrack, _videoTrack.jitsiTrack.getTrackStreamingStatus())
+                trackStreamingStatusChanged(_videoTrack.jitsiTrack, _videoTrack.jitsiTrack.getTrackStreamingStatus()),
             );
         }
     }
@@ -327,25 +288,25 @@ class Thumbnail extends PureComponent<IProps> {
             if (prevProps._videoTrack && !prevProps._videoTrack.local) {
                 prevProps._videoTrack.jitsiTrack.off(
                     JitsiTrackEvents.TRACK_STREAMING_STATUS_CHANGED,
-                    this.handleTrackStreamingStatusChanged
+                    this.handleTrackStreamingStatusChanged,
                 );
                 dispatch(
                     trackStreamingStatusChanged(
                         prevProps._videoTrack.jitsiTrack,
-                        prevProps._videoTrack.jitsiTrack.getTrackStreamingStatus()
-                    )
+                        prevProps._videoTrack.jitsiTrack.getTrackStreamingStatus(),
+                    ),
                 );
             }
             if (_videoTrack && !_videoTrack.local) {
                 _videoTrack.jitsiTrack.on(
                     JitsiTrackEvents.TRACK_STREAMING_STATUS_CHANGED,
-                    this.handleTrackStreamingStatusChanged
+                    this.handleTrackStreamingStatusChanged,
                 );
                 dispatch(
                     trackStreamingStatusChanged(
                         _videoTrack.jitsiTrack,
-                        _videoTrack.jitsiTrack.getTrackStreamingStatus()
-                    )
+                        _videoTrack.jitsiTrack.getTrackStreamingStatus(),
+                    ),
                 );
             }
         }
@@ -365,10 +326,10 @@ class Thumbnail extends PureComponent<IProps> {
         if (_videoTrack && !_videoTrack.local) {
             _videoTrack.jitsiTrack.off(
                 JitsiTrackEvents.TRACK_STREAMING_STATUS_CHANGED,
-                this.handleTrackStreamingStatusChanged
+                this.handleTrackStreamingStatusChanged,
             );
             dispatch(
-                trackStreamingStatusChanged(_videoTrack.jitsiTrack, _videoTrack.jitsiTrack.getTrackStreamingStatus())
+                trackStreamingStatusChanged(_videoTrack.jitsiTrack, _videoTrack.jitsiTrack.getTrackStreamingStatus()),
             );
         }
     }
@@ -391,33 +352,102 @@ class Thumbnail extends PureComponent<IProps> {
      * @inheritdoc
      * @returns {ReactElement}
      */
+    // override render() {
+    //     console.log("[ThumbnailRender] props:", this.props);
+    //     const {
+    //         _participantDevice,
+    //         _audioMuted,
+    //         _fakeParticipant,
+    //         _gifSrc,
+    //         _isScreenShare: isScreenShare,
+    //         _isVirtualScreenshare,
+    //         _participantId: participantId,
+    //         _raisedHand,
+    //         _renderDominantSpeakerIndicator,
+    //         height,
+    //         tileView,
+    //     } = this.props;
+    //     const styleOverrides = tileView
+    //         ? {
+    //               aspectRatio: SQUARE_TILE_ASPECT_RATIO,
+    //               flex: 0,
+    //               height,
+    //               maxHeight: null,
+    //               maxWidth: null,
+    //               width: null,
+    //           }
+    //         : null;
+    //     let audioDeviceStyle = null;
+
+    //     if (_participantDevice?.startsWith("EARPIECE")) {
+    //         audioDeviceStyle = styles.thumbnailOnPhone;
+    //     } else if (_participantDevice?.startsWith("SPEAKER")) {
+    //         audioDeviceStyle = styles.thumbnailOnSpeaker;
+    //     } else if (_participantDevice?.startsWith("HEADPHONES")) {
+    //         audioDeviceStyle = styles.thumbnailOnHeadphones;
+    //     }
+
+    //     console.log(`_participantDevice ${_participantDevice}`);
+
+    //     return (
+    //         <Container
+    //             onClick={this._onClick}
+    //             onLongPress={this._onThumbnailLongPress}
+    //             style={
+    //                 [
+    //                     styles.thumbnail,
+    //                     audioDeviceStyle,
+    //                     styleOverrides,
+    //                     _raisedHand && !_isVirtualScreenshare ? styles.thumbnailRaisedHand : null,
+    //                     _renderDominantSpeakerIndicator && !_isVirtualScreenshare
+    //                         ? styles.thumbnailDominantSpeaker
+    //                         : null,
+    //                     !_audioMuted ? styles.unmutedHighlight : null,
+    //                 ] as StyleType[]
+    //             }
+    //             touchFeedback={false}
+    //         >
+    //             {_gifSrc ? (
+    //                 <Image source={{ uri: _gifSrc }} style={styles.thumbnailGif as ImageStyle} />
+    //             ) : (
+    //                 <>
+    //                     <ParticipantView
+    //                         avatarSize={tileView ? AVATAR_SIZE * 1.5 : AVATAR_SIZE}
+    //                         disableVideo={!tileView && (isScreenShare || _fakeParticipant)}
+    //                         participantId={participantId}
+    //                         zOrder={1}
+    //                     />
+    //                     {this._renderIndicators()}
+    //                 </>
+    //             )}
+    //         </Container>
+    //     );
+    // }
+
     override render() {
-        console.log("[ThumbnailRender] props:", this.props);
         const {
             _participantDevice,
             _audioMuted,
-            _fakeParticipant,
-            _gifSrc,
-            _isScreenShare: isScreenShare,
-            _isVirtualScreenshare,
             _participantId: participantId,
             _raisedHand,
+            _isVirtualScreenshare,
             _renderDominantSpeakerIndicator,
             height,
+            width,
             tileView,
+            renderDisplayName,
         } = this.props;
+
         const styleOverrides = tileView
             ? {
-                aspectRatio: SQUARE_TILE_ASPECT_RATIO,
-                flex: 0,
-                height,
-                maxHeight: null,
-                maxWidth: null,
-                width: null,
-            }
+                  height: height,
+                  width: width || height,
+                  flex: 0,
+                  margin: 2,
+              }
             : null;
-        let audioDeviceStyle = null;
 
+        let audioDeviceStyle = null;
         if (_participantDevice?.startsWith("EARPIECE")) {
             audioDeviceStyle = styles.thumbnailOnPhone;
         } else if (_participantDevice?.startsWith("SPEAKER")) {
@@ -425,8 +455,6 @@ class Thumbnail extends PureComponent<IProps> {
         } else if (_participantDevice?.startsWith("HEADPHONES")) {
             audioDeviceStyle = styles.thumbnailOnHeadphones;
         }
-
-        console.log(`_participantDevice ${_participantDevice}`);
 
         return (
             <Container
@@ -446,19 +474,15 @@ class Thumbnail extends PureComponent<IProps> {
                 }
                 touchFeedback={false}
             >
-                {_gifSrc ? (
-                    <Image source={{ uri: _gifSrc }} style={styles.thumbnailGif as ImageStyle} />
-                ) : (
-                    <>
-                        <ParticipantView
-                            avatarSize={tileView ? AVATAR_SIZE * 1.5 : AVATAR_SIZE}
-                            disableVideo={!tileView && (isScreenShare || _fakeParticipant)}
-                            participantId={participantId}
-                            zOrder={1}
-                        />
-                        {this._renderIndicators()}
-                    </>
-                )}
+                {/* ✅ Just centered text - nothing else */}
+                <DisplayNameLabel contained={true} participantId={participantId} />
+
+                {/* Optional: Mute icon in corner */}
+                {/* {_audioMuted && (
+                    <View style={{ position: "absolute", bottom: 4, left: 4 }}>
+                        <AudioMutedIndicator />
+                    </View>
+                )} */}
             </Container>
         );
     }
@@ -515,7 +539,6 @@ function _mapStateToProps(state: IReduxState, ownProps: any) {
     const localParticipant = getLocalParticipant(state);
 
     const isModerator = localParticipant?.role === PARTICIPANT_ROLE.MODERATOR;
-
 
     console.log("[_mapStateToProps] Computed props:", {
         _audioMuted: audioTrack?.muted ?? true,

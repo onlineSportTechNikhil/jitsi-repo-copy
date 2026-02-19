@@ -1,8 +1,8 @@
-import { IStore } from '../../app/types';
-import { showModeratedNotification } from '../../av-moderation/actions';
-import { MEDIA_TYPE as AVM_MEDIA_TYPE } from '../../av-moderation/constants';
-import { shouldShowModeratedNotification } from '../../av-moderation/functions';
-import { isModerationNotificationDisplayed } from '../../notifications/functions';
+import { IStore } from "../../app/types";
+import { showModeratedNotification } from "../../av-moderation/actions";
+import { MEDIA_TYPE as AVM_MEDIA_TYPE } from "../../av-moderation/constants";
+import { shouldShowModeratedNotification } from "../../av-moderation/functions";
+import { isModerationNotificationDisplayed } from "../../notifications/functions";
 
 import {
     GUM_PENDING,
@@ -16,14 +16,10 @@ import {
     SET_VIDEO_MUTED,
     SET_VIDEO_UNMUTE_PERMISSIONS,
     STORE_VIDEO_TRANSFORM,
-    TOGGLE_CAMERA_FACING_MODE
-} from './actionTypes';
-import {
-    MediaType,
-    SCREENSHARE_MUTISM_AUTHORITY,
-    VIDEO_MUTISM_AUTHORITY
-} from './constants';
-import { IGUMPendingState } from './types';
+    TOGGLE_CAMERA_FACING_MODE,
+} from "./actionTypes";
+import { MediaType, SCREENSHARE_MUTISM_AUTHORITY, VIDEO_MUTISM_AUTHORITY } from "./constants";
+import { IGUMPendingState } from "./types";
 
 /**
  * Action to adjust the availability of the local audio.
@@ -38,7 +34,7 @@ import { IGUMPendingState } from './types';
 export function setAudioAvailable(available: boolean) {
     return {
         type: SET_AUDIO_AVAILABLE,
-        available
+        available,
     };
 }
 
@@ -56,7 +52,7 @@ export function setAudioAvailable(available: boolean) {
  * }}
  */
 export function setAudioMuted(muted: boolean, ensureTrack = false) {
-    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
+    return (dispatch: IStore["dispatch"], getState: IStore["getState"]) => {
         const state = getState();
 
         // check for A/V Moderation when trying to unmute
@@ -71,7 +67,7 @@ export function setAudioMuted(muted: boolean, ensureTrack = false) {
         dispatch({
             type: SET_AUDIO_MUTED,
             ensureTrack,
-            muted
+            muted,
         });
     };
 }
@@ -87,7 +83,7 @@ export function setAudioUnmutePermissions(blocked: boolean, skipNotification = f
     return {
         type: SET_AUDIO_UNMUTE_PERMISSIONS,
         blocked,
-        skipNotification
+        skipNotification,
     };
 }
 
@@ -103,7 +99,7 @@ export function setAudioUnmutePermissions(blocked: boolean, skipNotification = f
 export function setCameraFacingMode(cameraFacingMode: string) {
     return {
         type: SET_CAMERA_FACING_MODE,
-        cameraFacingMode
+        cameraFacingMode,
     };
 }
 
@@ -116,10 +112,10 @@ export function setCameraFacingMode(cameraFacingMode: string) {
  *     promise: Promise
  * }}
  */
-export function setInitialGUMPromise(promise: Promise<{ errors: any; tracks: Array<any>; }> | null = null) {
+export function setInitialGUMPromise(promise: Promise<{ errors: any; tracks: Array<any> }> | null = null) {
     return {
         type: SET_INITIAL_GUM_PROMISE,
-        promise
+        promise,
     };
 }
 
@@ -132,10 +128,11 @@ export function setInitialGUMPromise(promise: Promise<{ errors: any; tracks: Arr
  * @returns {Function}
  */
 export function setScreenshareMuted(
-        muted: boolean,
-        authority: number = SCREENSHARE_MUTISM_AUTHORITY.USER,
-        ensureTrack = false) {
-    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
+    muted: boolean,
+    authority: number = SCREENSHARE_MUTISM_AUTHORITY.USER,
+    ensureTrack = false,
+) {
+    return (dispatch: IStore["dispatch"], getState: IStore["getState"]) => {
         const state = getState();
 
         // check for A/V Moderation when trying to unmute
@@ -147,7 +144,7 @@ export function setScreenshareMuted(
             return;
         }
 
-        const oldValue = state['features/base/media'].screenshare.muted;
+        const oldValue = state["features/base/media"].screenshare.muted;
 
         // eslint-disable-next-line no-bitwise
         const newValue = muted ? oldValue | authority : oldValue & ~authority;
@@ -156,7 +153,7 @@ export function setScreenshareMuted(
             type: SET_SCREENSHARE_MUTED,
             authority,
             ensureTrack,
-            muted: newValue
+            muted: newValue,
         });
     };
 }
@@ -174,7 +171,7 @@ export function setScreenshareMuted(
 export function setVideoAvailable(available: boolean) {
     return {
         type: SET_VIDEO_AVAILABLE,
-        available
+        available,
     };
 }
 
@@ -190,10 +187,11 @@ export function setVideoAvailable(available: boolean) {
  * @returns {Function}
  */
 export function setVideoMuted(
-        muted: boolean | number,
-        authority: number = VIDEO_MUTISM_AUTHORITY.USER,
-        ensureTrack = false) {
-    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
+    muted: boolean | number,
+    authority: number = VIDEO_MUTISM_AUTHORITY.USER,
+    ensureTrack = false,
+) {
+    return (dispatch: IStore["dispatch"], getState: IStore["getState"]) => {
         const state = getState();
 
         // check for A/V Moderation when trying to unmute
@@ -205,7 +203,7 @@ export function setVideoMuted(
             return;
         }
 
-        const oldValue = state['features/base/media'].video.muted;
+        const oldValue = state["features/base/media"].video.muted;
 
         // eslint-disable-next-line no-bitwise
         const newValue = muted ? oldValue | authority : oldValue & ~authority;
@@ -214,7 +212,7 @@ export function setVideoMuted(
             type: SET_VIDEO_MUTED,
             authority,
             ensureTrack,
-            muted: newValue
+            muted: newValue,
         });
     };
 }
@@ -230,7 +228,7 @@ export function setVideoUnmutePermissions(blocked: boolean, skipNotification = f
     return {
         type: SET_VIDEO_UNMUTE_PERMISSIONS,
         blocked,
-        skipNotification
+        skipNotification,
     };
 }
 
@@ -250,7 +248,7 @@ export function storeVideoTransform(streamId: string, transform: Object) {
     return {
         type: STORE_VIDEO_TRANSFORM,
         streamId,
-        transform
+        transform,
     };
 }
 
@@ -267,7 +265,7 @@ export function storeVideoTransform(streamId: string, transform: Object) {
  */
 export function toggleCameraFacingMode() {
     return {
-        type: TOGGLE_CAMERA_FACING_MODE
+        type: TOGGLE_CAMERA_FACING_MODE,
     };
 }
 
@@ -286,6 +284,6 @@ export function gumPending(mediaTypes: Array<MediaType>, status: IGUMPendingStat
     return {
         type: GUM_PENDING,
         mediaTypes,
-        status
+        status,
     };
 }

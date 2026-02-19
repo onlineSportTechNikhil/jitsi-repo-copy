@@ -1,7 +1,7 @@
 import React, { useCallback, useState } from "react";
 import { TouchableOpacity, View, ViewStyle } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
-
+import { Text, StyleSheet } from "react-native";
 import {
     ACTION_SHORTCUT_PRESSED as PRESSED,
     ACTION_SHORTCUT_RELEASED as RELEASED,
@@ -25,9 +25,29 @@ const LONG_PRESS = "long.press";
 const MicrophoneButton = (): JSX.Element | null => {
     const dispatch = useDispatch();
 
+    const isAudioModerationEnabled = useSelector((state) => state["features/av-moderation"]?.audioModerationEnabled);
+    // const isAudioModerationEnabled = true;
+
     const audioMuted = useSelector((state: IReduxState) =>
         isLocalTrackMuted(state["features/base/tracks"], MEDIA_TYPE.AUDIO),
     );
+
+    const styling = StyleSheet.create({
+        mutedBanner: {
+            position: "absolute",
+            top: 20,
+            alignSelf: "center",
+            backgroundColor: "#dc3545",
+            paddingHorizontal: 16,
+            paddingVertical: 8,
+            borderRadius: 6,
+        },
+        mutedText: {
+            color: "#fff",
+            fontWeight: "600",
+            fontSize: 18,
+        },
+    });
 
     const disabled = useSelector(isAudioMuteButtonDisabled);
     const enabledFlag = useSelector((state: IReduxState) => getFeatureFlag(state, AUDIO_MUTE_BUTTON_ENABLED, true));
@@ -77,9 +97,32 @@ const MicrophoneButton = (): JSX.Element | null => {
                     [styles.microphoneStyles.container, !audioMuted && styles.microphoneStyles.unmuted] as ViewStyle[]
                 }
             >
-                <View style={styles.microphoneStyles.iconContainer as ViewStyle}>
+                {/* <View
+                    style={
+                        audioMuted
+                            ? styles.microphoneStyles.iconContainer
+                            : (styles.microphoneStyles.iconContainer2 as ViewStyle)
+                    }
+                >
                     <Icon src={audioMuted ? IconMicSlash : IconMic} style={styles.microphoneStyles.icon} />
-                </View>
+                </View> */}
+                {isAudioModerationEnabled ? (
+                    // 🔴 Show muted text when admin locked audio
+                    <View style={styles.microphoneStyles.iconContainer}>
+                        <Text style={styling.mutedText}>MUTED</Text>
+                    </View>
+                ) : (
+                    // 🎤 Otherwise show mic icon
+                    <View
+                        style={
+                            audioMuted
+                                ? styles.microphoneStyles.iconContainer
+                                : (styles.microphoneStyles.iconContainer2 as ViewStyle)
+                        }
+                    >
+                        <Icon src={audioMuted ? IconMicSlash : IconMic} style={styles.microphoneStyles.icon} />
+                    </View>
+                )}
             </View>
         </TouchableOpacity>
     );
