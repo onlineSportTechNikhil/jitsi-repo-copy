@@ -4,7 +4,7 @@ set -e -u -x
 
 THIS_DIR=$(cd -P "$(dirname "$(readlink "${BASH_SOURCE[0]}" || echo "${BASH_SOURCE[0]}")")" && pwd)
 PROJECT_REPO=$(realpath ${THIS_DIR}/../..)
-RELEASE_REPO=$(realpath ${THIS_DIR}/../../../jitsi-meet-ios-sdk-releases)
+RELEASE_REPO=$(realpath ${THIS_DIR}/../../../voicemeet-mobile/plugins/jitsi_meet_flutter_sdk/ios)
 DEFAULT_SDK_VERSION=$(/usr/libexec/PlistBuddy -c "Print CFBundleShortVersionString" ${THIS_DIR}/../sdk/src/Info.plist)
 SDK_VERSION=${OVERRIDE_SDK_VERSION:-${DEFAULT_SDK_VERSION}}
 

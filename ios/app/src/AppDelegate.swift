@@ -25,6 +25,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             builder.setFeatureFlag("welcomepage.enabled", withBoolean: true)
             builder.setFeatureFlag("ios.screensharing.enabled", withBoolean: true)
             builder.setFeatureFlag("ios.recording.enabled", withBoolean: true)
+            builder.setFeatureFlag("nitin-force.enabled", withBoolean: true)
         }
 
         jitsiMeet.application(application, didFinishLaunchingWithOptions: launchOptions ?? [:])
